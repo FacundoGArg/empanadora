@@ -10,9 +10,9 @@ export default async function ChatPage() {
   noStore(); // Deshabilitamos el caching para esta página
   return (
     <ConversationProvider>
-      <div className="flex bg-[#fffaf0]/60 h-screen">
+      <div className="flex min-h-screen flex-col bg-[#fffaf0]/60 sm:flex-row">
         <OrderTracker />
-        <div className="w-full flex flex-col">
+        <div className="flex w-full flex-col">
           <Topbar />
           <Chat />
         </div>

@@ -33,7 +33,7 @@ export default async function ProductsPage() {
   const promotions = promotionsData.promotions ?? [];
 
   return (
-    <div className="min-h-screen bg-[#fffaf0]/60 p-8 space-y-8">
+    <div className="min-h-screen bg-[#fffaf0]/60 p-4 sm:p-6 lg:p-8 space-y-8">
       <header>
         <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
           Productos y catálogo
@@ -49,7 +49,7 @@ export default async function ProductsPage() {
           {menu.sections.map((section) => (
             <Card key={section.type} className="border-amber-100 bg-white/90 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-gray-900">
+                <CardTitle className="flex flex-wrap items-center gap-2 text-gray-900">
                   {section.label}
                   <Badge variant="secondary">
                     {section.categories.reduce(
@@ -68,7 +68,7 @@ export default async function ProductsPage() {
                         {CATEGORY_TRANSLATIONS[category.category] ?? category.category}
                       </h3>
                     </div>
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {category.items.map((item) => {
                         const notes = [
                           item.beverage?.isAlcoholic ? "Alcohol" : null,
@@ -161,7 +161,7 @@ export default async function ProductsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             {promotions.map((promo: PromotionSummary) => (
               <Card key={promo.id} className="border-amber-100 bg-white/90 shadow-sm">
                 <CardHeader>

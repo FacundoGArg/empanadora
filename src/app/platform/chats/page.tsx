@@ -52,7 +52,7 @@ export default async function ChatPage() {
   );
 
   return (
-    <div className="bg-[#fffaf0]/60">
+    <div className="calc(100vh - 64px) bg-[#fffaf0]/60 ">
       <ChatReader conversations={serialized} />
     </div>
   );

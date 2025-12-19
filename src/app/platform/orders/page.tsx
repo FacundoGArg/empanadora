@@ -37,7 +37,7 @@ export default async function OrdersPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#fffaf0]/60 p-8">
+    <div className="min-h-screen bg-[#fffaf0]/60 p-4 sm:p-6 lg:p-8">
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
           Pedidos confirmados
@@ -93,7 +93,7 @@ export default async function OrdersPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex gap-12">
+                <div className="mt-6 flex flex-col gap-6 md:flex-row md:gap-12">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                       Cliente
@@ -143,7 +143,7 @@ export default async function OrdersPage() {
                   <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 mb-3">
                     Ítems
                   </p>
-                  <div className="grid gap-3 sm:grid-cols-4">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                     {order.items.map((item) => {
                       const snapshot = item.productSnapshot as {
                         name?: string;

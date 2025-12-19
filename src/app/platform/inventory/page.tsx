@@ -66,7 +66,7 @@ export default async function InventoryPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#fffaf0]/60 p-8 space-y-8">
+    <div className="min-h-screen bg-[#fffaf0]/60 p-4 sm:p-6 lg:p-8 space-y-8">
       <header>
         <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
           Inventario
@@ -77,7 +77,7 @@ export default async function InventoryPage() {
         </p>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="border-amber-100 bg-white/90 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-500">

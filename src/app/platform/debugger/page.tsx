@@ -21,15 +21,15 @@ export default function ChatDebugPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 p-6">
-      <header className="flex items-center justify-between">
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 p-4 sm:p-6">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Chat Stream Debug</h1>
           <p className="text-sm text-muted-foreground">
             Messages/parts below are the raw payload coming from <code>/api/chat</code>.
           </p>
         </div>
-        <div className="flex gap-3 text-sm text-muted-foreground">
+        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
           <span>Status: {status}</span>
           <button
             className="rounded-md border px-3 py-1 text-xs text-foreground disabled:opacity-40"
@@ -46,15 +46,18 @@ export default function ChatDebugPage() {
       </header>
 
       <section className="rounded-md border bg-card">
-        <form onSubmit={handleSubmit} className="flex gap-2 border-b p-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-2 border-b p-4 sm:flex-row sm:items-center"
+        >
           <input
-            className="flex-1 rounded-md border px-3 py-2"
+            className="w-full rounded-md border px-3 py-2 sm:flex-1"
             value={input}
             placeholder="Type a prompt and press Enter"
             onChange={(e) => setInput(e.target.value)}
           />
           <button
-            className="rounded-md bg-primary px-4 py-2 text-primary-foreground disabled:opacity-40"
+            className="w-full rounded-md bg-primary px-4 py-2 text-primary-foreground disabled:opacity-40 sm:w-auto"
             disabled={!input.trim() || status === "streaming"}
           >
             Send
@@ -62,7 +65,7 @@ export default function ChatDebugPage() {
           <button
             type="button"
             onClick={() => regenerate()}
-            className="rounded-md border px-4 py-2 disabled:opacity-40"
+            className="w-full rounded-md border px-4 py-2 disabled:opacity-40 sm:w-auto"
             disabled={status !== "ready"}
           >
             Regenerate
@@ -70,7 +73,7 @@ export default function ChatDebugPage() {
           <button
             type="button"
             onClick={() => stop()}
-            className="rounded-md border px-4 py-2 disabled:opacity-40"
+            className="w-full rounded-md border px-4 py-2 disabled:opacity-40 sm:w-auto"
             disabled={status !== "streaming"}
           >
             Stop

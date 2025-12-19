@@ -79,7 +79,7 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#fffaf0]/60 p-8">
+    <div className="min-h-screen bg-[#fffaf0]/60 p-4 sm:p-6 lg:p-8">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
@@ -92,12 +92,12 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((metric) => {
           const Icon = metric.icon;
           return (
             <Card key={metric.label} className="border-amber-100 bg-white/90 shadow-sm">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-wrap items-center justify-between gap-2 space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">
                   {metric.label}
                 </CardTitle>

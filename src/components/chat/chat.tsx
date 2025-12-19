@@ -172,8 +172,8 @@ export const Chat = () => {
   );
   
   return (
-    <div className="max-w-4xl mx-auto p-6 relative size-full h-[calc(100svh-64px)] overflow-hidden">
-      <div className="flex flex-col h-full">
+    <div className="relative h-[calc(100svh-64px)] w-full overflow-hidden px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <div className="mx-auto flex h-full w-full max-w-4xl flex-col">
         <Conversation className="h-full">
           <ConversationContent className='overflow-y-auto
             [&::-webkit-scrollbar]:w-2

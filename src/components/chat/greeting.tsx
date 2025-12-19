@@ -6,14 +6,14 @@ export const Greeting = () => {
   return (
     <div
       key="overview"
-      className="max-w-3xl mx-auto md:mt-20 px-8 size-full flex flex-col justify-center"
+      className="mx-auto flex size-full max-w-3xl flex-col justify-center px-4 text-center sm:px-6 md:mt-20 md:text-left"
     >
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.5 }}
-        className="text-2xl font-semibold"
+        className="text-lg font-semibold sm:text-2xl"
       >
         Hola! Mi nombre es Dora
       </motion.div>
@@ -22,7 +22,7 @@ export const Greeting = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.6 }}
-        className="text-2xl text-zinc-500"
+        className="text-md text-zinc-500 sm:text-2xl"
       >
         Cómo puedo ayudarte hoy?
       </motion.div>

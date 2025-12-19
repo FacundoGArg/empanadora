@@ -3,7 +3,7 @@ import Image from "next/image"
 export const Topbar = async function() {
 
   return (
-    <header className="sticky top-0 z-50 bg-[#fffaf0] w-full border-b px-4 md:px-6">
+    <header className="sticky top-0 z-30 md:z-50 bg-[#fffaf0] w-full border-b px-4 md:px-6">
       <div className="flex h-16 items-center justify-between gap-4">        
 
         <div className="flex flex-1 items-center justify-start gap-4">
@@ -14,6 +14,7 @@ export const Topbar = async function() {
             width={160}
             height={40}
             priority
+            className="h-auto w-28 sm:w-36"
           />
           
         </div>

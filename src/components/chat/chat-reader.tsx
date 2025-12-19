@@ -67,6 +67,7 @@ export function ChatReader({ conversations }: ChatReaderProps) {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(
     conversations[0]?.id ?? null,
   );
+  const [showListPanel, setShowListPanel] = useState(false);
   const [closingConversationId, setClosingConversationId] = useState<string | null>(null);
   const [batchClosing, setBatchClosing] = useState(false);
   const [actionError, setActionError] = useState<{
@@ -223,7 +224,14 @@ export function ChatReader({ conversations }: ChatReaderProps) {
 
   return (
     <div className="flex h-[calc(100vh-64px)] border-t border-amber-100 bg-[#fffaf0]/40">
-      <aside className="hidden w-80 shrink-0 flex-col border-r border-amber-100 bg-white/80 md:flex">
+      <aside
+        className={cn(
+          "flex w-full flex-col border-r bg-white shadow-[0_8px_24px_rgba(0,0,0,0.15)] d:static md:w-80 md:shrink-0 md:shadow-none",
+          showListPanel
+            ? "fixed inset-0 z-50 md:z-30 h-svh"
+            : "hidden md:flex",
+        )}
+      >
         <div className="px-4 py-3">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-3">
@@ -235,6 +243,15 @@ export function ChatReader({ conversations }: ChatReaderProps) {
                   Selecciona un chat para revisar el historial.
                 </p>
               </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="md:hidden"
+                onClick={() => setShowListPanel(false)}
+              >
+                Ver chat
+              </Button>
               {hasOpenConversations ? (
                 <Button
                   type="button"
@@ -253,7 +270,7 @@ export function ChatReader({ conversations }: ChatReaderProps) {
             ) : null}
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-3 pb-4">
+        <div className="flex-1 overflow-y-auto px-3 pb-4 bg-amber-50">
           {conversationList.length === 0 ? (
             <p className="px-1 text-sm text-gray-500">
               Todavía no hay conversaciones almacenadas.
@@ -277,7 +294,10 @@ export function ChatReader({ conversations }: ChatReaderProps) {
                 return (
                   <button
                     key={conversation.id}
-                    onClick={() => setActiveConversationId(conversation.id)}
+                    onClick={() => {
+                      setActiveConversationId(conversation.id);
+                      setShowListPanel(false);
+                    }}
                     className={cn(
                       "cursor-pointer w-full rounded-xl border px-3 py-2 text-left text-sm shadow-sm transition",
                       isActive
@@ -329,11 +349,25 @@ export function ChatReader({ conversations }: ChatReaderProps) {
         </div>
       </aside>
 
-      <main className="flex-1">
+      <main
+        className={cn(
+          "flex-1",
+          showListPanel ? "hidden md:block" : "block",
+        )}
+      >
         {activeConversation ? (
           <div className="flex h-full flex-col">
             <div className="border-b border-amber-100 bg-white/70 px-6 py-4">
               <div className="flex flex-wrap items-center justify-between gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="md:hidden"
+                    onClick={() => setShowListPanel(true)}
+                  >
+                    Conversaciones
+                  </Button>
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge
                     variant="outline"

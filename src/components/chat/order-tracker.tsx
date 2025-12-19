@@ -222,59 +222,74 @@ export const OrderTracker = () => {
     );
   };
 
+  const panelClasses = sidebarOpen
+    ? "fixed inset-0 z-40 h-[100svh] w-[100svw] bg-[#fffaf0] transition-all duration-300 ease-in-out sm:static sm:h-auto sm:w-80 sm:border-r sm:border-gray-200"
+    : "hidden bg-[#fffaf0] transition-all duration-300 ease-in-out sm:flex sm:w-16 sm:border-r sm:border-gray-200";
+
   return (
-    <div
-      className={`${
-        sidebarOpen ? "w-80" : "w-16"
-      } transition-all duration-300 ease-in-out bg-[#fffaf0] border-r border-gray-200 flex flex-col`}
-    >
-      <div className="flex flex-col h-full min-w-0">
-        <div className="flex items-center justify-between p-4">
-          {sidebarOpen && (
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                Seguimiento
-              </p>
-              <h2 className="text-lg font-semibold leading-tight">
-                Tu pedido
-              </h2>
-            </div>
-          )}
-          <div className="ml-auto flex items-center gap-2">
+    <>
+      <div className={`${panelClasses} flex flex-col`}>
+        <div className="flex h-full min-w-0 flex-col">
+          <div className="flex items-center justify-between border-b border-gray-200 p-4 sm:border-b-0">
             {sidebarOpen && (
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                  Seguimiento
+                </p>
+                <h2 className="text-lg font-semibold leading-tight">
+                  Tu pedido
+                </h2>
+              </div>
+            )}
+            <div className="ml-auto flex items-center gap-2">
+              {sidebarOpen && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  onClick={() => fetchOrder()}
+                  disabled={loading || !conversationId}
+                >
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <RefreshCcw className="h-4 w-4" />
+                  )}
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                onClick={() => fetchOrder()}
-                disabled={loading || !conversationId}
+                onClick={toggleSidebar}
               >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <RefreshCcw className="h-4 w-4" />
-                )}
+                <Menu className="h-4 w-4" />
               </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              onClick={toggleSidebar}
-            >
-              <Menu className="h-4 w-4" />
-            </Button>
+            </div>
           </div>
+          {sidebarOpen && (
+            <div className="flex-1 overflow-y-auto px-4 pt-2 pb-6">
+              {renderContent()}
+            </div>
+          )}
+          {!sidebarOpen && (
+            <div className="flex-1 items-center justify-center p-2 text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Orden
+            </div>
+          )}
         </div>
-        {sidebarOpen && (
-          <div className="flex-1 overflow-y-auto px-4 pb-6">{renderContent()}</div>
-        )}
-        {!sidebarOpen && (
-          <div className="flex-1 items-center justify-center p-2 text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Orden
-          </div>
-        )}
       </div>
-    </div>
+      {!sidebarOpen && (
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={toggleSidebar}
+          className="fixed top-3 right-4 z-50 gap-2 rounded-full shadow-lg sm:hidden"
+        >
+          <Menu className="h-4 w-4" />
+          Ver pedido
+        </Button>
+      )}
+    </>
   );
 };
