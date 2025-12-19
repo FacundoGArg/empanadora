@@ -1,0 +1,477 @@
+// lib/db/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ======================================================================
+// ENUMS
+// ======================================================================
+
+// Tipos de producto (polimorfismo)
+enum ProductType {
+  EMPANADA
+  BEVERAGE
+  DESSERT
+}
+
+// Categorías de empanadas
+enum EmpanadaCategory {
+  CLASSIC
+  SPECIAL
+}
+
+// Categorías de bebidas
+enum BeverageCategory {
+  WATER
+  SOFT_DRINK
+  BEER
+}
+
+// Estados de la orden (CART == carrito en curso)
+enum OrderStatus {
+  CART
+  CONFIRMED
+  // Se podría extender a:
+  // PREPARING
+  // READY
+  // DELIVERED
+  // CANCELLED
+}
+
+// Métodos de envío.
+enum ShippingType {
+  DELIVERY
+  PICKUP
+}
+
+// Estado del pago (simulación básica)
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+}
+
+// Tipo de promoción
+enum PromotionType {
+  QUANTITY_DISCOUNT
+  FIXED_BUNDLE_PRICE
+}
+
+// Tipo de descuento
+enum DiscountKind {
+  PERCENT
+  AMOUNT
+}
+
+// Canal de conversación (por si mañana sumás WhatsApp/IG/etc.)
+enum ConversationChannel {
+  WEB
+  WHATSAPP
+  // Se podría extender a:
+  // INSTAGRAM
+  // APP
+}
+
+// Estado operativo del chat
+enum ConversationStatus {
+  OPEN
+  CLOSED
+}
+
+enum ConversationSentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
+// ======================================================================
+// CUSTOMER / IDENTIDAD
+// ======================================================================
+
+model Customer {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Identidad básica
+  firstName String?
+  lastName  String?
+  phone     String? 
+  email     String?  @unique
+
+  // Pueden haber múltiples direcciones por cliente
+  addresses CustomerAddress[]
+
+  // Relaciones
+  orders         Order[]
+  conversations  Conversation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([phone])
+}
+
+model CustomerAddress {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  customerId String   @db.ObjectId
+
+  label      String?
+  address1   String
+  address2   String?
+  postalCode String?
+  notes      String?
+
+  // Relación
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+}
+
+// ======================================================================
+// PRODUCT CATALOG
+// ======================================================================
+
+// Product es el “catálogo” genérico. No tiene precios.
+// El precio se define a nivel del MenuItem
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+
+  description String?
+  image       String? 
+
+  type        ProductType
+
+  // Sub-modelo si type=EMPANADA.
+  empanada    Empanada?
+
+  // Sub-modelo si type=BEBIDA.
+  beverage    Beverage?
+
+  inventory   Inventory?
+
+  // Relaciones
+  menuItems   MenuItem[]
+  orderItems  OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([name])
+}
+
+// Detalle específico de empanadas
+model Empanada {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  productId   String @unique @db.ObjectId
+
+  category    EmpanadaCategory
+  ingredients String[] @default([])
+  isVegan     Boolean @default(false)
+  isVegetarian Boolean @default(false)
+  isGlutenFree Boolean @default(false)
+
+  // Relaciones
+  product     Product @relation(fields: [productId], references: [id])
+}
+
+// Detalle específico de bebidas
+model Beverage {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  productId   String @unique @db.ObjectId
+
+  category    BeverageCategory
+  isAlcoholic Boolean @default(false)
+
+  // Relaciones
+  product     Product @relation(fields: [productId], references: [id])
+}
+
+
+// ======================================================================
+// MENUS & PRICING
+// ======================================================================
+
+model Menu {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  active    Boolean  @default(true)
+
+  // Ítems del menú: (menu x product) con precio.
+  items     MenuItem[]
+
+  // Promos activas (opcionalmente asociadas a un menú).
+  promotions Promotion[]
+
+  orders      Order[]  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active])
+  @@index([name])
+}
+
+model MenuItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  menuId    String   @db.ObjectId
+  productId String   @db.ObjectId
+
+  price     Float
+  currency  String   @default("ARS")
+
+  // Relaciones
+  menu      Menu     @relation(fields: [menuId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([menuId, productId])
+  @@index([menuId])
+  @@index([productId])
+}
+
+// ======================================================================
+// PROMOTIONS
+// ======================================================================
+
+model Promotion {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  type      PromotionType
+  active    Boolean       @default(true)
+
+  // FIXED_BUNDLE_PRICE
+  fixedPrice  Float?
+  currency    String   @default("ARS")
+
+  // QUANTITY_DISCOUNT
+  minQty      Int?
+  discountKind DiscountKind?
+  discountValue Float? // Ej: 0.10 para 10% (PERCENT), or 500 (AMOUNT)
+
+  // Qué productos / categorías deben existir para aplicar
+  requirements PromotionRequirement[]
+
+  // Scope
+  menuId    String?       @db.ObjectId
+  menu      Menu?         @relation(fields: [menuId], references: [id])
+
+  stackable Boolean @default(false) // Aclara si puede aplicarse múltiples veces en la misma orden
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active])
+  @@index([menuId])
+}
+
+model PromotionRequirement {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  promotionId  String   @db.ObjectId
+  promotion    Promotion @relation(fields: [promotionId], references: [id])
+
+  qty          Int
+
+  // Filtro mínimo
+  productType  ProductType
+
+  // Filtros por subtipo (opcionales)
+  // Para indicar “cualquier bebida” o “cualquier empanada” las dejamos vacías (y significa “todas”)
+  empanadaCategory EmpanadaCategory?
+  beverageCategories BeverageCategory[] @default([])
+
+  @@index([promotionId])
+}
+
+
+// ======================================================================
+// CONVERSATION
+// ======================================================================
+
+model Conversation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  channel   ConversationChannel @default(WEB)
+  status    ConversationStatus  @default(OPEN)
+  sentimentLabel    ConversationSentiment?
+  sentimentScore    Float?
+  sentimentSummary  String?
+  sentimentUpdatedAt DateTime?
+
+  // Vinculación con cliente (si se identificó)
+  customerId String?   @db.ObjectId
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  // Orden "activa" (carrito en curso) para este chat.
+  activeOrderId String? @db.ObjectId @unique
+  activeOrder   Order?  @relation("ActiveOrderForConversation", fields: [activeOrderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Historial de órdenes que nacieron o se gestionaron en este chat.
+  orders      Order[] @relation("OrdersFromConversation")
+
+  // UIMessage[] (AI SDK): cada elemento es un UIMessage serializado en Json.
+  // Referencia: https://ai-sdk.dev/docs/reference/ai-sdk-core/ui-message
+  messages Json[] @default([])
+
+  // Metadata libre (idioma, modelo, sessionId, etc)
+  metadata Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([channel])
+  @@index([status])
+  @@index([customerId])
+}
+
+// ======================================================================
+// ORDER / CART (CHATBOT)
+// ======================================================================
+
+model Order {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+
+  customerId  String?     @db.ObjectId
+  customer    Customer?   @relation(fields: [customerId], references: [id])
+  contactFirstName String?
+
+  status      OrderStatus @default(CART)
+
+  // Vinculación a conversación (trazabilidad del pedido).
+  // Una conversación puede tener varias órdenes a lo largo del tiempo.
+  conversationId String? @db.ObjectId
+  conversation   Conversation? @relation("OrdersFromConversation", fields: [conversationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Orden activa en una conversación (carrito en curso)
+  activeForConversation Conversation? @relation("ActiveOrderForConversation")
+
+  menuId      String?     @db.ObjectId
+  menu        Menu?       @relation(fields: [menuId], references: [id])
+
+  currency       String   @default("ARS")
+  subtotalAmount Float    @default(0)
+  discountAmount Float    @default(0)
+  deliveryFee    Float    @default(0)
+  totalAmount    Float    @default(0)
+
+  metadata    Json?
+
+  // Relaciones
+  items       OrderItem[]
+  payment     Payment?
+  shipping    Shipping?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([customerId])
+  @@index([menuId])
+  @@index([conversationId])
+}
+
+// Item de orden: snapshot de precio.
+model OrderItem {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String   @db.ObjectId
+  productId  String   @db.ObjectId
+
+  quantity   Int      @default(1)
+
+  unitPrice  Float
+  totalPrice Float
+
+  productSnapshot Json?
+
+  // Relaciones
+  order      Order     @relation(fields: [orderId], references: [id])
+  product    Product   @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// ======================================================================
+// SHIPPING
+// ======================================================================
+
+model Shipping {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+
+  orderId   String       @unique @db.ObjectId
+  type      ShippingType
+
+  addressSnapshot Json?
+  addressDescription String?
+  pickupLocation  String?
+
+  fee       Float   @default(0)
+  eta       DateTime?
+
+  // Relaciones
+  order     Order   @relation(fields: [orderId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ======================================================================
+// PAYMENT
+// ======================================================================
+
+model Payment {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+
+  orderId   String        @unique @db.ObjectId
+  order     Order         @relation(fields: [orderId], references: [id])
+
+  amount    Float
+  currency  String        @default("ARS")
+  method    PaymentMethod
+
+  status    PaymentStatus   @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+// ======================================================================
+// INVENTORY
+// ======================================================================
+
+model Inventory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String   @unique @db.ObjectId
+  quantity   Int      @default(0)
+  safetyStock Int     @default(0)
+
+  product    Product  @relation(fields: [productId], references: [id])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
