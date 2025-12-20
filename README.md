@@ -157,7 +157,7 @@ Las siguientes capturas ejemplifican situaciones que el agente está capacitado 
 1. Posibilidad de leer y compartir el menú:
 ![Prompt example 1](public/images/menu/prompt-example-1.png)
 
-2. Posibilidad de leer y promociones vigentes:
+2. Posibilidad de leer y compartir promociones vigentes:
 ![Prompt example 2](public/images/menu/prompt-example-2.png)
 
 3. Capacidad para guiar al usuario en el armado de su pedido:
@@ -170,18 +170,17 @@ Las siguientes capturas ejemplifican situaciones que el agente está capacitado 
 ![Prompt example 5](public/images/menu/prompt-example-11.png)
 
 6. Recomendar otros productos para complementar el pedido:
-![Prompt example 5](public/images/menu/prompt-example-5.png)
+![Prompt example 6](public/images/menu/prompt-example-5.png)
 
 7. Requerir la información necesaria para confirmar los pedidos:
-![Prompt example 6](public/images/menu/prompt-example-6.png)
+![Prompt example 7](public/images/menu/prompt-example-6.png)
 
 8. Acceder a documentos marcados como públicos para responder y compartir con los usuarios:
-![Prompt example 7](public/images/menu/prompt-example-7.png)
+![Prompt example 8](public/images/menu/prompt-example-7.png)
 
 9. Acceder a documentos marcados como privados solo para tomar información de contexto para responder:
-![Prompt example 8](public/images/menu/prompt-example-8.png)
-
-![Prompt example 9](public/images/menu/prompt-example-9.png)
+![Prompt example 9.1](public/images/menu/prompt-example-8.png)
+![Prompt example 9.2](public/images/menu/prompt-example-9.png)
 
 10. Capacidad de reconocer cuando una instrucción está fuera de su alcance y responder de manera adecuada:
 ![Prompt example 10](public/images/menu/prompt-example-10.png)
