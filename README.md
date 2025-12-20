@@ -4,6 +4,11 @@
 
 Dora es una vendedora digital con IA y una plataforma de gestion para empanaderias. Automatiza ventas por chat, administra pedidos de punta a punta y centraliza analitica operativa para el negocio.
 
+## Demos
+
+- Demo para chatear con Dora: https://empanadora.vercel.app/
+- Demo de la plataforma de administrador: https://empanadora.vercel.app/platform
+
 ## Que construye este repo
 
 - Asistente conversacional de ventas que entiende menu, promociones y stock.
