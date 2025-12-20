@@ -150,6 +150,43 @@ El asistente tiene una capa de RAG para responder con informacion respaldada por
 - Documentos publicos: se guardan en `src/lib/docs/public`, se sirven via `/api/docs` y aparecen como links clickeables en la UI.
 - Documentos privados: se guardan en `src/lib/docs/private`, solo enriquecen el contexto del agente y no se exponen como links en la UI.
 
+## Ejemplos de prompts y comportamiento esperado
+
+Las siguientes capturas ejemplifican situaciones que el agente está capacitado para manejar:
+
+1. Posibilidad de leer y compartir el menú:
+![Prompt example 1](public/images/menu/prompt-example-1.png)
+
+2. Posibilidad de leer y promociones vigentes:
+![Prompt example 2](public/images/menu/prompt-example-2.png)
+
+3. Capacidad para guiar al usuario en el armado de su pedido:
+![Prompt example 3](public/images/menu/prompt-example-3.png)
+
+4. Posibilidad de crear el carrito y actualizarlo a pedido del usuario:
+![Prompt example 4](public/images/menu/prompt-example-4.png)
+
+5. Entendimiento del pedido y de la aplicación de las promociones disponibles:
+![Prompt example 5](public/images/menu/prompt-example-11.png)
+
+6. Recomendar otros productos para complementar el pedido:
+![Prompt example 5](public/images/menu/prompt-example-5.png)
+
+7. Requerir la información necesaria para confirmar los pedidos:
+![Prompt example 6](public/images/menu/prompt-example-6.png)
+
+8. Acceder a documentos marcados como públicos para responder y compartir con los usuarios:
+![Prompt example 7](public/images/menu/prompt-example-7.png)
+
+9. Acceder a documentos marcados como privados solo para tomar información de contexto para responder:
+![Prompt example 8](public/images/menu/prompt-example-8.png)
+
+![Prompt example 9](public/images/menu/prompt-example-9.png)
+
+10. Capacidad de reconocer cuando una instrucción está fuera de su alcance y responder de manera adecuada:
+![Prompt example 10](public/images/menu/prompt-example-10.png)
+
+
 ## Notas operativas
 
 - El asistente usa tools en `src/lib/ai/tools` para consultar menu, promos y pedidos.

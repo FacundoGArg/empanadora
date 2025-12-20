@@ -31,7 +31,7 @@ type OrderSummary = {
 };
 
 export const OrderTracker = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { conversationId, orderRefreshToken } = useConversation();
   const [order, setOrder] = useState<OrderSummary | null>(null);
   const [loading, setLoading] = useState(false);
@@ -94,6 +94,20 @@ export const OrderTracker = () => {
     }
     fetchOrder();
   }, [conversationId, fetchOrder, orderRefreshToken]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 640px)");
+    const handleChange = (event: MediaQueryListEvent) => {
+      setSidebarOpen(event.matches);
+    };
+
+    setSidebarOpen(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
 
   const renderItems = () => {
     if (!order) {

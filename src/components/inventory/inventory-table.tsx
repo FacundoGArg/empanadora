@@ -117,10 +117,13 @@ export function InventoryTable({
                         </div>
                       )}
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 w-50">
                       <p className="font-semibold text-gray-900">{row.productName}</p>
-                      <p className="text-xs text-gray-500">
-                        ID: {row.productId} · Actualizado{" "}
+                      <p className="text-xs text-gray-500 line-clamp-1">
+                        ID: {row.productId}
+                      </p>
+                      <p className="text-xs text-gray-500 line-clamp-1">
+                        Actualizado{" "}
                         {new Date(row.updatedAt).toLocaleString("es-AR", {
                           dateStyle: "short",
                           timeStyle: "short",
